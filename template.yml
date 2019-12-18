@@ -1,0 +1,38 @@
+ROSTemplateFormatVersion: "2015-09-01"
+Transform: "Aliyun::Serverless-2018-04-03"
+Resources:
+  Rendertron:
+    Type: "Aliyun::Serverless::Service"
+    Properties:
+      Description: This is Rendertron service
+      NasConfig: Auto
+    rendertron:
+      Type: "Aliyun::Serverless::Function"
+      Properties:
+        Handler: index.handler
+        Runtime: custom
+        Timeout: 60
+        MemorySize: 1024
+        CodeUri: ./
+        EnvironmentVariables:
+          LD_LIBRARY_PATH: >-
+            /mnt/auto/root/usr/lib:/mnt/auto/root/usr/lib/x86_64-linux-gnu:/mnt/auto/root/lib/x86_64-linux-gnu:/mnt/auto/root/usr/lib64
+          NODE_PATH: /mnt/auto/node_modules
+      Events:
+        httpTrigger:
+          Type: HTTP
+          Properties:
+            AuthType: ANONYMOUS
+            Methods:
+              - GET
+              - POST
+              - PUT
+  renderton.mofangdegisn.cn:
+    Type: "Aliyun::Serverless::CustomDomain"
+    Properties:
+      Protocol: HTTP
+      RouteConfig:
+        routes:
+          /*:
+            ServiceName: Rendertron
+            FunctionName: rendertron
